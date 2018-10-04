@@ -72,7 +72,8 @@ public class DotsIndicator extends LinearLayout {
     @NonNull
     private ImageView createDotView() {
         ImageView view = new ImageView(getContext());
-        view.setLayoutParams(new ViewGroup.LayoutParams((int) dpToPx(32), (int) dpToPx(32)));
+        view.setPadding(8,8,8,8);
+        view.setLayoutParams(new ViewGroup.LayoutParams((int) dpToPx(18), (int) dpToPx(18)));
         return view;
     }
 
