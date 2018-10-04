@@ -1,7 +1,5 @@
 package st.fb.com.viewpager;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -10,18 +8,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class DotsIndicator extends FrameLayout {
+public class DotsIndicator extends LinearLayout {
 
-    private ImageView mSelectedDot;
-    private LinearLayout mDotsContainer;
-    private int mDotChangeDuration = 300;
-    private boolean shouldAnimateDots = true;
+    private static int NOTHING_SELECTED = -1;
+    private int mCurrentlySelectedPosition = NOTHING_SELECTED; // indicate no dots are selected;
+
 
     public interface DotClickListener {
         void onDotSelected(int position);
@@ -43,16 +40,10 @@ public class DotsIndicator extends FrameLayout {
         mDotClickListener = dotClickListener;
     }
 
-    public void setDotChangeDuration(int dotChangeDuration) {
-        mDotChangeDuration = dotChangeDuration;
-    }
-
-    public void setShouldAnimateDots(boolean shouldAnimateDots) {
-        this.shouldAnimateDots = shouldAnimateDots;
-    }
 
     public void init() {
-
+        setOrientation(HORIZONTAL);
+        setGravity(Gravity.CENTER);
     }
 
     public void setNumberOfIndicators(int count) {
@@ -62,13 +53,6 @@ public class DotsIndicator extends FrameLayout {
 
     private void addDots(int numOfDots) {
         removeAllViews();
-        mDotsContainer = new LinearLayout(getContext());
-        mDotsContainer.setOrientation(LinearLayout.HORIZONTAL);
-        mDotsContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        addView(mDotsContainer);
-        mSelectedDot = createDotView();
-        mSelectedDot.setVisibility(GONE);
-        setBg(mSelectedDot, R.drawable.selected_dot);
         for (int i = 0; i < numOfDots; i++) {
             ImageView view = createDotView();
             final int position = i;
@@ -80,10 +64,9 @@ public class DotsIndicator extends FrameLayout {
                         mDotClickListener.onDotSelected(position);
                 }
             });
-            mDotsContainer.addView(view);
+            addView(view);
             setBg(view, R.drawable.default_dot);
         }
-
     }
 
     @NonNull
@@ -99,25 +82,14 @@ public class DotsIndicator extends FrameLayout {
     }
 
     public void updateSelectedIndicator(int position) {
-        if (mDotsContainer != null && mDotsContainer.getChildCount() >= position) {
-            ImageView childAtPosition = (ImageView) mDotsContainer.getChildAt(position);
-            float x = childAtPosition.getX();
-            float y = childAtPosition.getY();
-            int duration = mSelectedDot.getParent() == null ? 0 : mDotChangeDuration;
-            mSelectedDot.animate()
-                    .setDuration(shouldAnimateDots ? duration : 0)
-                    .x(x)
-                    .y(y)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            mSelectedDot.setVisibility(VISIBLE);
-                        }
-                    })
-                    .start();
-            if (mSelectedDot.getParent() == null) {
-                addView(mSelectedDot);
+        if (getChildCount() >= position && mCurrentlySelectedPosition != position) {
+            if (mCurrentlySelectedPosition != NOTHING_SELECTED) {
+                ImageView imageView = (ImageView) getChildAt(mCurrentlySelectedPosition);
+                setBg(imageView, R.drawable.default_dot);
             }
+            ImageView newlyActivatedDot = (ImageView) getChildAt(position);
+            setBg(newlyActivatedDot, R.drawable.selected_dot);
+            mCurrentlySelectedPosition = position;
         }
     }
 

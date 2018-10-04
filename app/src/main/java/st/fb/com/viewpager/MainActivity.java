@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dotsIndicator.setDotChangeDuration(200); // default is 300
-        dotsIndicator.setShouldAnimateDots(false); // default is true
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
