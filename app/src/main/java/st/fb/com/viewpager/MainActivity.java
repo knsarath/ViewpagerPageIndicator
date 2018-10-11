@@ -1,5 +1,6 @@
 package st.fb.com.viewpager;
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,43 +13,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final ViewPager viewPager = findViewById(R.id.viewPager);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.container, new MyFragment());
+        fragmentTransaction.commit();
 
-        ArrayList<Integer> imageIds = new ArrayList<>();
-        imageIds.add(R.drawable.img1);
-        imageIds.add(R.drawable.img2);
-        imageIds.add(R.drawable.img3);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), imageIds);
-
-       // Following is the usage of Dots indicator
-
-        final DotsIndicator dotsIndicator = findViewById(R.id.dots_indicator);
-        dotsIndicator.setNumberOfIndicators(imageIds.size());
-        dotsIndicator.setDotClickListener(new DotsIndicator.DotClickListener() {
-            @Override
-            public void onDotSelected(int position) {
-                viewPager.setCurrentItem(position);
-            }
-        });
-
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                dotsIndicator.updateSelectedIndicator(position); // change the dots indicator position
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-
-        viewPager.setAdapter(adapter);
     }
 }

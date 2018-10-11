@@ -1,5 +1,7 @@
 package st.fb.com.viewpager;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -19,13 +21,22 @@ public class ImageViewFragment extends Fragment {
         imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         int imageId = getArguments().getInt("imageId");
         imageView.setBackgroundResource(imageId);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri url = Uri.parse(getArguments().getString("url"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, url);
+                startActivity(browserIntent);
+            }
+        });
         return imageView;
     }
 
-    public static ImageViewFragment createInstance(@DrawableRes int imageId) {
+    public static ImageViewFragment createInstance(@DrawableRes int imageId, String url) {
         ImageViewFragment imageViewFragment = new ImageViewFragment();
         Bundle args = new Bundle();
         args.putInt("imageId", imageId);
+        args.putString("url", url);
         imageViewFragment.setArguments(args);
         return imageViewFragment;
     }
